@@ -20,9 +20,9 @@ def is_port_open(ip, port):
 
 # 要检测的IP和端口
 ip = "192.168.87.1"
-port = 80
+port = 8080
 
 if is_port_open(ip, port):
-    print(f"{port} open")
+    print(f"{ip} {port} open")
 else:
-    print(f"{port} close")
+    print(f"{ip} {port} close")
