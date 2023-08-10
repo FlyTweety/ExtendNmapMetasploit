@@ -5,7 +5,6 @@ import time
 
 import utils
 
-# 改了源代码，
 def callback_print_and_record(host, ports, scan_data, output_file):
     print("--------------------")
     print(host)
@@ -58,9 +57,6 @@ class PyNmapWrapper:
                 #运行扫描，这不会被阻塞
                 this_async_scanner.scan(hosts = ip, ports = str(port), arguments = arguments, callback = callback_print_and_record, timeout = timeout, output_file = output_file)
 
-
-                #写文件的事晚点再说
-
             #阻塞直到这个batch全部完成
             running_sanner_count = len(async_scanner_pool)
             while running_sanner_count > 0:
@@ -86,9 +82,9 @@ if __name__ == '__main__':
     #要导入端口扫描的结果来运行，最后输出结果到文件
     danny_ip_port_list = utils.getDannyIPandPorts()
     PyNmapWrapperInst = PyNmapWrapper()
-    keep_record_file = "asyncResult.txt"
+    keep_record_file = "asyncResultvulscanvulscan0809.txt"
     #results = PyNmapWrapperInst.scan([('172.19.219.32', 7676), ('172.19.219.14', 8009), ('172.19.219.11', 631), ('172.19.221.34', 443)], arguments = "-sV --version-all --script vuln", timeout = 300, keep_record_file = keep_record_file)
-    results = PyNmapWrapperInst.scan(utils.getDannyIPandPorts(), arguments = "-sV --version-all --script vuln", timeout = 300, output_file = keep_record_file)
+    results = PyNmapWrapperInst.scan(utils.getDannyIPandPorts0809(), arguments = "-sV --version-all --script=vulscan/vulscan.nse", timeout = 480, output_file = keep_record_file)
     
 
 
