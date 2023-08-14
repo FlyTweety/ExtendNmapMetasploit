@@ -82,9 +82,9 @@ if __name__ == '__main__':
     #要导入端口扫描的结果来运行，最后输出结果到文件
     danny_ip_port_list = utils.getDannyIPandPorts()
     PyNmapWrapperInst = PyNmapWrapper()
-    keep_record_file = "asyncResultvulscanvulscan0809.txt"
+    keep_record_file = "”--script nmap-vulners“Danny0810.txt"
     #results = PyNmapWrapperInst.scan([('172.19.219.32', 7676), ('172.19.219.14', 8009), ('172.19.219.11', 631), ('172.19.221.34', 443)], arguments = "-sV --version-all --script vuln", timeout = 300, keep_record_file = keep_record_file)
-    results = PyNmapWrapperInst.scan(utils.getDannyIPandPorts0809(), arguments = "-sV --version-all --script=vulscan/vulscan.nse", timeout = 480, output_file = keep_record_file)
+    results = PyNmapWrapperInst.scan(utils.getDannyIPandPorts0810whohascpe(), arguments = "-sV --version-all --script nmap-vulners/", timeout = 480, output_file = keep_record_file)
     
 
 

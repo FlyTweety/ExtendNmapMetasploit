@@ -244,6 +244,22 @@ def getDannyIPandPorts0809():
         
     return DannyIPandPorts 
 
+def getDannyIPandPorts0810whohascpe():
+    DannyIPandPorts = [
+        ('192.168.87.33', 6543),   
+        ('192.168.87.48', 8080),
+        ('192.168.87.134', 22),
+        ('192.168.87.134', 135),
+        ('192.168.87.134', 139),
+        ('192.168.87.134', 5357),
+        ('192.168.87.134', 49668),
+        ('192.168.87.131', 53)
+        ]
+        
+    return DannyIPandPorts 
+
+
+
 """
 import pandas
 
