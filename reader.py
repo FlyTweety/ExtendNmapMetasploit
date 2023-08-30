@@ -1,7 +1,10 @@
 import json
 
 #filename = '”--script nmap-vulners“Danny.txt'  # 文件名
+
+
 filename = '“--script vuln”Danny.txt'  # 文件名
+
 
 # 读取数据
 with open(filename, 'r') as file:
