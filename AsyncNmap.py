@@ -63,9 +63,14 @@ class PyNmapWrapper:
                 for scanner in async_scanner_pool:
                     if not scanner.still_scanning():
                         running_sanner_count = running_sanner_count - 1
+                        print(f"准备remove{scanner.last_scan}")
+                        time.sleep(5)
                         async_scanner_pool.remove(scanner)
+                        print(f"成功remove{scanner.last_scan}")
                 print("waiting for", str(running_sanner_count), "running scan in this batch")
                 time.sleep(2)
+
+            time.sleep(5.0)
 
         print("All finished")
         print("结束时间：", datetime.datetime.now())
@@ -88,7 +93,13 @@ if __name__ == '__main__':
     list2 = utils.getDannyIPandPorts()
     new_list  = [item for item in list1 if item not in list2]
     
-    results = PyNmapWrapperInst.scan(new_list, arguments = "-sV --version-all --script vuln", timeout = 480, output_file = keep_record_file)
+    # --script=vulscan/vulscan.nse
+    # --script nmap-vulners
+    # --script
+    list = [("127.0.0.1", 135),("127.0.0.1", 445),("127.0.0.1", 902),("127.0.0.1", 912),("127.0.0.1", 135),("127.0.0.1", 69)]
+
+    #results = PyNmapWrapperInst.scan(list, arguments = "-sV --version-all --script vuln", timeout = 480, output_file = keep_record_file)
+    results = PyNmapWrapperInst.scan(list, arguments = "-sV ", timeout = 480, output_file = keep_record_file)
     
 
 

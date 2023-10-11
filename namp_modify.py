@@ -59,8 +59,6 @@ import sys
 from multiprocessing import Process
 from xml.etree import ElementTree as ET
 
-import json #我加的
-
 
 __author__ = "Alexandre Norman (norman@xael.org)"
 __version__ = "0.7.1"
@@ -752,30 +750,11 @@ def __scan_progressive__(  # NOQA: CFQ002
             callback(host, scan_data)
     return
 
-def __my_scan_progressive__(  # 我改动过的
-    self, hosts, ports, arguments, callback, sudo, timeout, output_file
-):
-    """
-    Used by PortScannerAsync for callback
-    """
-    for host in self._nm.listscan(hosts):
-        try:
-            scan_data = self._nm.scan(host, ports, arguments, sudo, timeout)
-        except PortScannerError:
-            scan_data = None
-
-        if callback is not None:
-            callback(host, ports, scan_data, output_file)
-    return
-
 
 ############################################################################
 
 
 class PortScannerAsync(object):
-
-    last_scan = ""
-
     """
     PortScannerAsync allows to use nmap from python asynchronously
     for each host scanned, callback is called with scan result for the host
@@ -799,21 +778,16 @@ class PortScannerAsync(object):
         Cleanup when deleted
 
         """
-
-        print(f"进入del{self.last_scan}")
         if self._process is not None:
             try:
                 if self._process.is_alive():
-                    self._process.terminate()
+                    self._process.terminate() # Cause Exception and don't know why
             except AssertionError:
                 # Happens on python3.4
                 # when using PortScannerAsync twice in a row
                 pass
             except AttributeError:
-                if self._process is None:
-                    print(f"{self.last_scan}已经为None")
-                else:
-                    print(f"{self.last_scan}怪事")
+                pass # Modifiy by Chenyang. This is strange why it would enter __del__
 
         self._process = None
         return
@@ -826,11 +800,7 @@ class PortScannerAsync(object):
         callback=None,
         sudo=False,
         timeout=0,
-        output_file=None,
     ):
-        print("!")
-        self.last_scan = ports
-
         """
         Scan given hosts in a separate process and return host by host result using callback function
 
@@ -878,8 +848,8 @@ class PortScannerAsync(object):
             ), "Xml output can't be redirected from command line.\nYou can access it after a scan using:\nnmap.nm.get_nmap_last_output()"  # NOQA: E501
 
         self._process = Process(
-            target=__my_scan_progressive__,
-            args=(self, hosts, ports, arguments, callback, sudo, timeout, output_file), # 我加了参数
+            target=__scan_progressive__,
+            args=(self, hosts, ports, arguments, callback, sudo, timeout),
         )
         self._process.daemon = True
         self._process.start()
