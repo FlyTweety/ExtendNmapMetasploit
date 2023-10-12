@@ -1,4 +1,4 @@
-import namp_modify as nmap
+import python_namp as nmap
 import json
 import datetime
 import time
@@ -6,13 +6,23 @@ import re
 
 import utils
 
-def callback_print_and_record(host, scan_data):
+def callback_store_to_database(host, scan_data):
     print("--------------------")
     ip = host
-    port = re.search(r"-p\s+(\S+)", scan_data['nmap']['command_line']).group(1) # It will not go wrong
+    port = int(re.search(r"-p\s+(\S+)", scan_data['nmap']['command_line']).group(1)) # It seems dangerous but it is safe
+    try:
+        if type(scan_data) == dict:
+            if scan_data["nmap"]["scanstats"]["uphosts"] == "1":
+                if scan_data["scan"][ip]["tcp"][port]["state"] == "open":
+                    result = scan_data["scan"][ip]["tcp"][port]
+                else:
+                    result = "Port Down"
+            else:
+                result = "Device Down"
+    except:
+        result = "Exception"
 
-    print(host)
-    print(scan_data)
+    print(ip, str(port), result)
 
     # 结果存到DB
 
@@ -28,7 +38,6 @@ def scan(ip_port_list, arguments, timeout = 180):
     async_scanner_pool = []
     for i in range(0, batch_size):
         async_scanner_pool.append(nmap.PortScannerAsync())
-        print(async_scanner_pool[i]._process)
 
     split_ip_port_lists = utils.split_array(ip_port_list, batch_size)
     for batch_index in range(0, len(split_ip_port_lists)):
@@ -38,7 +47,7 @@ def scan(ip_port_list, arguments, timeout = 180):
         for i in range(0, len(batch_ip_port_list)):
             ip, port = batch_ip_port_list[i]
             print("No.", str(i), ip, str(port))
-            async_scanner_pool[i].scan(hosts = ip, ports = str(port), arguments = arguments, callback = callback_print_and_record, timeout = timeout)
+            async_scanner_pool[i].scan(hosts = ip, ports = str(port), arguments = arguments, callback = callback_store_to_database, timeout = timeout)
 
         # 等待这一批结束再下一批
         still_running_count = 4
@@ -58,8 +67,7 @@ def scan(ip_port_list, arguments, timeout = 180):
 if __name__ == '__main__':
 
     list = [("127.0.0.1", 135),("127.0.0.1", 445),("127.0.0.1", 902),("127.0.0.1", 912),("127.0.0.1", 135),("127.0.0.1", 69)]
-    #scan(list, arguments = "-sV --version-all --script vuln", timeout = 480)
-    scan(list, arguments = "-sV", timeout = 180)
+    scan(list, arguments = "-sV --version-all --script vuln", timeout = 180)
 
 
 
